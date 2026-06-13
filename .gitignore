@@ -1,0 +1,76 @@
+# IDE state
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# CMake/build output
+build/
+build-*/
+cmake-build-*/
+cmake_win_x64/
+out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+
+# Visual Studio/MSBuild output
+Debug/
+Release/
+x64/
+x86/
+Win32/
+*.obj
+*.pch
+*.pdb
+*.ipch
+*.ilk
+*.idb
+*.tlog
+*.lastbuildstate
+*.recipe
+*.log
+
+# Binary artifacts and packaged dependencies
+*.exe
+*.dll
+*.so
+*.so.*
+*.dylib
+*.lib
+*.a
+*.exp
+*.def
+*.bin
+*.dat
+*.pak
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+
+# Local test workspace
+/tests/
+
+# Runtime dumps and temp files
+*.dmp
+*.tmp
+*.temp
+*.bak
+*.swp
+*.pid
+*.lock
+*.txt
+*.tsv
+
+# OS noise
+Thumbs.db
+Desktop.ini
+.DS_Store
