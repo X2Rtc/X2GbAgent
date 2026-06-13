@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - GB28181 Device Console</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="login-page">
+  <div class="login-lang">
+    <select id="loginLang" aria-label="Language"></select>
+  </div>
+  <main class="login-shell">
+    <section class="login-showcase">
+      <div class="brand">
+        <span id="brandMark" class="brand-mark">GB</span>
+        <div class="brand-copy">
+          <strong id="brandName" data-i18n="productName">国标设备底座</strong>
+          <small id="brandSubtitle" data-i18n="productSubtitle">开放式国标视频网关</small>
+        </div>
+      </div>
+
+      <div class="login-headline">
+        <span class="login-eyebrow" data-i18n="loginHeroEyebrow">开放视频基础设施</span>
+        <h1 data-i18n="loginHeroTitle">让视频接入成为开放基础设施</h1>
+        <p id="loginSubtitle" data-i18n="loginHeroDesc">以开源方式连接设备、平台与应用，降低国标视频网关的建设门槛。</p>
+      </div>
+
+      <div class="login-carousel" aria-label="Application scenarios">
+        <div class="login-carousel-visual">
+          <article class="login-slide scene-denoise" role="img" data-i18n-aria="sceneDenoiseAlt" aria-label="AI denoise for noisy field operations"></article>
+          <article class="login-slide scene-vehicle" role="img" data-i18n-aria="sceneVehicleAlt" aria-label="Remote vehicle control with eight monitoring views"></article>
+          <article class="login-slide scene-bitrate" role="img" data-i18n-aria="sceneBitrateAlt" aria-label="Adaptive bitrate video transmission in poor network conditions"></article>
+        </div>
+        <div class="login-slide-copy" aria-live="polite">
+          <div class="login-slide-text"><span data-i18n="sceneDenoiseTag">AI Denoise</span><b data-i18n="sceneDenoiseTitle">嘈杂现场，也能听清关键声音</b></div>
+          <div class="login-slide-text"><span data-i18n="sceneVehicleTag">Multi-View Control</span><b data-i18n="sceneVehicleTitle">远程车辆控制，最多 8 路视角同步监控</b></div>
+          <div class="login-slide-text"><span data-i18n="sceneBitrateTag">Adaptive Bitrate</span><b data-i18n="sceneBitrateTitle">弱网环境下，实时探测码率，丢包也不花屏</b></div>
+        </div>
+        <div class="login-carousel-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <section class="login-side">
+      <form id="loginForm" class="login-form">
+        <div class="form-head">
+          <h2 data-i18n="loginTitle">登录控制台</h2>
+          <p data-i18n="loginDesc">请输入管理员账号访问设备配置。</p>
+        </div>
+        <label><span data-i18n="username">用户名</span><input name="username" autocomplete="username" autofocus></label>
+        <label><span data-i18n="password">密码</span><input name="password" type="password" autocomplete="current-password"></label>
+        <button id="loginBtn" type="submit" data-i18n="login">登录</button>
+        <div id="error" class="login-error"></div>
+      </form>
+      <div class="login-footnote">
+        <span class="login-copyright"><span data-i18n="copyrightOwner">版权归属</span> <a href="https://x2rtc.com/" target="_blank" rel="noopener noreferrer">x2rtc.com</a></span>
+        <span class="login-support"><span data-i18n="supportPrefix">感谢</span> <a href="https://www.anyrtc.io/" target="_blank" rel="noopener noreferrer">anyrtc.io</a><span data-i18n-prefix-space="supportSuffix"> 提供技术支持</span></span>
+      </div>
+    </section>
+  </main>
+  <script src="/i18n.js"></script>
+  <script>
+    const DEFAULT_OEM = {
+      brand: {
+        logoText: 'GB',
+        logoUrl: '',
+        faviconUrl: ''
+      },
+      theme: {
+        background: '#eef3f6',
+        surface: '#ffffff',
+        surfaceMuted: '#f8fafc',
+        text: '#17212f',
+        muted: '#667085',
+        line: '#d8e0e7',
+        primary: '#1f6feb',
+        secondary: '#38bdf8',
+        navigation: '#111c2b',
+        success: '#117a46',
+        danger: '#b42318'
+      }
+    };
+    function mergeDeep(base, override) {
+      const out = {...base};
+      Object.entries(override || {}).forEach(([key, value]) => {
+        out[key] = value && typeof value === 'object' && !Array.isArray(value) && base[key]
+          ? mergeDeep(base[key], value)
+          : value;
+      });
+      return out;
+    }
+    async function applyOem() {
+      let config = DEFAULT_OEM;
+      try {
+        const res = await fetch('/oem.config.json', {cache: 'no-store'});
+        if (res.ok) config = mergeDeep(DEFAULT_OEM, await res.json());
+      } catch (_) {}
+      const theme = config.theme || DEFAULT_OEM.theme;
+      const vars = {
+        background: '--bg',
+        surface: '--panel',
+        surfaceMuted: '--panel-2',
+        text: '--text',
+        muted: '--muted',
+        line: '--line',
+        primary: '--accent',
+        secondary: '--accent-2',
+        navigation: '--nav',
+        success: '--ok',
+        danger: '--danger'
+      };
+      Object.entries(vars).forEach(([key, cssVar]) => {
+        if (theme[key]) document.documentElement.style.setProperty(cssVar, theme[key]);
+      });
+      const brand = config.brand || DEFAULT_OEM.brand;
+      const mark = document.getElementById('brandMark');
+      mark.textContent = brand.logoText || 'GB';
+      if (brand.logoUrl) {
+        mark.style.backgroundImage = `url("${brand.logoUrl}")`;
+        mark.classList.add('has-logo');
+      }
+      if (brand.faviconUrl) {
+        const icon = document.createElement('link');
+        icon.rel = 'icon';
+        icon.href = brand.faviconUrl;
+        document.head.appendChild(icon);
+      }
+    }
+    let loginLang = window.GB_I18N ? GB_I18N.getLanguage() : 'zh';
+    function applyLoginI18n() {
+      if (!window.GB_I18N) return;
+      loginLang = GB_I18N.getLanguage();
+      document.documentElement.lang = loginLang === 'zh' ? 'zh-CN' : loginLang;
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        el.textContent = GB_I18N.t(el.dataset.i18n, loginLang);
+      });
+      document.querySelectorAll('[data-i18n-prefix-space]').forEach((el) => {
+        const text = GB_I18N.t(el.dataset.i18nPrefixSpace, loginLang);
+        el.textContent = text ? ` ${text}` : '';
+      });
+      document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
+        el.setAttribute('aria-label', GB_I18N.t(el.dataset.i18nAria, loginLang));
+      });
+      document.title = `${GB_I18N.t('loginTitle', loginLang)} - ${GB_I18N.t('productName', loginLang)}`;
+      const select = document.getElementById('loginLang');
+      if (select && !select.options.length) {
+        select.innerHTML = GB_I18N.supportedLanguages()
+          .map((lang) => `<option value="${lang}">${GB_I18N.t('langName', lang)}</option>`)
+          .join('');
+      }
+      if (select) select.value = loginLang;
+    }
+    function initLoginLanguage() {
+      const select = document.getElementById('loginLang');
+      if (!select || !window.GB_I18N) return;
+      applyLoginI18n();
+      select.addEventListener('change', () => {
+        GB_I18N.setLanguage(select.value);
+        applyLoginI18n();
+      });
+    }
+    applyOem().then(applyLoginI18n);
+    initLoginLanguage();
+    document.getElementById('loginForm').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const form = ev.currentTarget;
+      const error = document.getElementById('error');
+      const button = document.getElementById('loginBtn');
+      error.textContent = '';
+      button.disabled = true;
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            username: form.elements.username.value,
+            password: form.elements.password.value
+          })
+        });
+        if (!res.ok) throw new Error(window.GB_I18N ? GB_I18N.t('invalidCredentials', loginLang) : '用户名或密码错误');
+        location.href = '/';
+      } catch (e) {
+        error.textContent = e.message || (window.GB_I18N ? GB_I18N.t('loginFailed', loginLang) : '登录失败');
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

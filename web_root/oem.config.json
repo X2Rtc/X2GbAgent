@@ -1,0 +1,38 @@
+{
+  "brand": {
+    "manufacturerName": "Open GB",
+    "productName": "GB28181 Device Console",
+    "shortName": "OG",
+    "subtitle": "Professional National Standard Video Gateway",
+    "loginSubtitle": "以开源方式连接设备、平台与应用，降低国标视频网关的建设门槛。",
+    "logoText": "GB",
+    "logoUrl": "",
+    "faviconUrl": "",
+    "copyright": "Open GB Project"
+  },
+  "theme": {
+    "background": "#f3f6f8",
+    "surface": "#ffffff",
+    "surfaceMuted": "#f8fafc",
+    "text": "#17212f",
+    "muted": "#667085",
+    "line": "#d8e0e7",
+    "primary": "#1f6feb",
+    "secondary": "#38bdf8",
+    "navigation": "#111c2b",
+    "success": "#117a46",
+    "warning": "#a45b00",
+    "danger": "#b42318"
+  },
+  "modules": {
+    "dashboard": true,
+    "platforms": true,
+    "av": true,
+    "devices": true,
+    "logs": true,
+    "system": true
+  },
+  "defaults": {
+    "language": "zh"
+  }
+}

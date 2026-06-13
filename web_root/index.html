@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GB28181 Device Console</title>
+  <link rel="stylesheet" href="/style.css?v=20260602-channel-lock3">
+</head>
+<body>
+  <aside class="nav">
+    <div class="brand">
+      <span id="brandMark" class="brand-mark">GB</span>
+      <div class="brand-copy">
+        <strong id="brandName">GB28181 Device Console</strong>
+        <small id="brandSubtitle">Professional National Standard Video Gateway</small>
+      </div>
+    </div>
+    <nav class="module-nav" aria-label="Console modules">
+      <button data-view="dashboard" class="active">Dashboard</button>
+      <button data-view="platforms">Platforms</button>
+      <button data-view="av">Audio / Video</button>
+      <button data-view="devices">Devices</button>
+      <button data-view="logs">Logs</button>
+    </nav>
+    <div class="nav-footer">
+      <button id="settingsBtn" type="button">Settings</button>
+      <small id="brandCopyright">Open GB Project</small>
+    </div>
+  </aside>
+
+  <main>
+    <section id="dashboard" class="view active">
+      <header class="page-head">
+        <div>
+          <h1>Device Overview</h1>
+          <p>GB28181 registration, media links, system resources, and alarms.</p>
+        </div>
+        <div class="head-actions">
+          <span id="appVersion" class="version-pill">--</span>
+          <span id="wsState" class="state-pill offline">WS offline</span>
+          <span id="lastRefresh" class="muted">--</span>
+        </div>
+      </header>
+
+      <div id="alertStrip" class="alert-strip"></div>
+
+      <div class="kpi-grid">
+        <article class="kpi">
+          <label>Device Status</label>
+          <strong id="deviceStatus">--</strong>
+          <span id="uptime">--</span>
+        </article>
+        <article class="kpi">
+          <label>SIP Registration</label>
+          <strong id="sipStatus">--</strong>
+          <span id="sipDetail">--</span>
+        </article>
+        <article class="kpi">
+          <label>Streaming Status</label>
+          <strong id="streamStatus">--</strong>
+          <span id="streamDetail">GB RTP</span>
+        </article>
+        <article class="kpi">
+          <label>Resource Load</label>
+          <strong id="resourceStatus">--</strong>
+          <span id="resourceDetail">--</span>
+        </article>
+      </div>
+
+      <div class="dashboard-grid">
+        <section class="panel span-2">
+          <div class="panel-head">
+            <h2>Platform Links</h2>
+            <span class="muted">GB/T 28181</span>
+          </div>
+          <div id="platformSummary" class="platform-list"></div>
+        </section>
+
+        <section class="panel dashboard-scroll-panel">
+          <div class="panel-head">
+            <h2>Alarms</h2>
+            <span id="alarmCount" class="badge">0</span>
+          </div>
+          <div id="alarmList" class="alarm-list"></div>
+        </section>
+
+        <section class="panel dashboard-scroll-panel">
+          <div class="panel-head">
+            <h2>Recent Logs</h2>
+            <button id="dashboardReloadLogs" class="ghost">Refresh</button>
+          </div>
+          <div id="recentLogs" class="log-lines"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="platforms" class="view">
+      <header class="page-head">
+        <div>
+          <h1>GB28181 Channels</h1>
+          <p>Create channels and configure platform registration parameters.</p>
+        </div>
+        <button id="addChannel" type="button" hidden>Add channel</button>
+      </header>
+      <div id="platformForms" class="channel-grid"></div>
+    </section>
+
+    <section id="av" class="view">
+      <header class="page-head">
+        <div>
+          <h1>Audio / Video</h1>
+          <p>Configure encoded output per channel.</p>
+        </div>
+        <div class="actions inline-actions"></div>
+      </header>
+      <div id="avForms" class="av-editor-wrap"></div>
+    </section>
+
+    <section id="devices" class="view">
+      <header class="page-head">
+        <div>
+          <h1>Input Sources</h1>
+          <p>Configure capture devices and simulated media files as independent input sources.</p>
+        </div>
+        <div class="actions inline-actions">
+          <button id="refreshDevices" type="button">Refresh Devices</button>
+          <button id="saveDevices" type="button">Keep Input Source</button>
+        </div>
+      </header>
+
+      <div class="forms device-layout">
+        <form id="deviceForm" class="device-form">
+          <h2>Input Source</h2>
+          <div class="source-choice" role="radiogroup" aria-label="Input source">
+            <label class="source-card" data-source-card="device">
+              <input name="source_mode" type="radio" value="device">
+              <span>
+                <b data-device-label="captureDevices">Capture Devices</b>
+                <small data-device-label="captureHint">Enumerated camera and microphone inputs.</small>
+              </span>
+            </label>
+            <label class="source-card" data-source-card="file">
+              <input name="source_mode" type="radio" value="file">
+              <span>
+                <b data-device-label="simulatedFile">Simulated File</b>
+                <small data-device-label="fileHint">Decode as a virtual input, then pass through the encoder pipeline.</small>
+              </span>
+            </label>
+            <label class="source-card" data-source-card="screen" hidden>
+              <input name="source_mode" type="radio" value="screen">
+              <span>
+                <b data-device-label="screenSource">Screen Source</b>
+                <small data-device-label="screenHint">Capture the desktop screen.</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="device-fields">
+            <label><span data-device-label="videoDevice">Video Device</span>
+              <select name="video_device"></select>
+            </label>
+            <label><span data-device-label="audioDevice">Audio Device</span>
+              <select name="audio_device"></select>
+            </label>
+          </div>
+
+          <div class="screen-fields">
+            <label><span data-device-label="screenInput">Screen</span>
+              <select name="screen_source" id="screenSourceSelect"></select>
+            </label>
+          </div>
+
+          <div class="file-fields">
+            <label><span data-device-label="mediaFile">Media File</span>
+              <select name="media_file" id="mediaFileSelect"></select>
+            </label>
+            <div id="mediaFileStatus" class="device-note"></div>
+            <div class="file-meta">
+              <label><span data-device-label="resolution">Resolution</span><input name="resolution" readonly></label>
+              <label><span data-device-label="bitrate">Bitrate Kbps</span><input name="bitrate_kbps" type="number" readonly></label>
+            </div>
+            <label><span data-device-label="pacing">Pacing</span>
+              <select name="file_pacing">
+                <option value="realtime">Realtime pacing</option>
+                <option value="fast">Read as fast as possible</option>
+              </select>
+            </label>
+            <label class="check"><input name="file_loop" type="checkbox"> <span data-device-label="loopFile">Loop file</span></label>
+          </div>
+
+          <div class="channel-bindings">
+            <div class="sub-head">
+              <h3 id="channelBindingsTitle">Bound Channels</h3>
+              <span id="channelBindingsHint" class="muted">One input source can bind multiple channels.</span>
+            </div>
+            <div id="channelBindings" class="binding-list"></div>
+          </div>
+        </form>
+
+        <section class="panel device-preview">
+          <div class="panel-head">
+            <h2>Current Selection</h2>
+            <span id="deviceModeBadge" class="badge">--</span>
+          </div>
+          <div class="preview-box">
+            <img id="videoPreview" width="960" height="540" alt="Video preview">
+          </div>
+          <div id="deviceSummary" class="kv-list"></div>
+          <div id="deviceRuntimeStatus" class="device-runtime"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="logs" class="view">
+      <header class="page-head">
+        <div>
+          <h1>Logs</h1>
+          <p>SIP, RTP, and system events.</p>
+        </div>
+        <button id="reloadLogs">Reload Logs</button>
+      </header>
+      <div class="tabs">
+        <button data-log="ALL" class="active">All</button>
+      </div>
+      <pre id="logBox"></pre>
+    </section>
+  </main>
+
+  <div id="settingsModal" class="modal" hidden>
+    <div class="modal-dialog settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal-head">
+        <h2 id="settingsTitle">Settings</h2>
+        <button id="settingsClose" type="button" class="ghost">Close</button>
+      </div>
+      <div class="settings-body">
+        <nav class="settings-tabs" data-i18n-aria="settingsSections">
+          <button type="button" class="active" data-settings-tab="account" data-i18n="settingsAccountTitle">Account</button>
+          <button type="button" data-settings-tab="appearance" data-i18n="settingsAppearanceTitle">Appearance</button>
+          <button type="button" data-settings-tab="updates" data-i18n="settingsUpdatesTitle">Updates</button>
+          <button type="button" data-settings-tab="language" data-i18n="language">Language</button>
+        </nav>
+        <div class="settings-pane active" data-settings-pane="account">
+          <form id="accountSettingsForm" class="settings-form">
+            <h3 id="settingsAccountTitle">Account</h3>
+            <label><span data-i18n="username">Username</span><input name="username" value="admin" readonly></label>
+            <label><span data-i18n="currentPassword">Current password</span><input name="current_password" type="password" autocomplete="current-password"></label>
+            <label><span data-i18n="newPassword">New password</span><input name="new_password" type="password" autocomplete="new-password"></label>
+            <div class="settings-actions">
+              <button id="savePasswordBtn" type="button" data-i18n="savePassword">Save Password</button>
+            </div>
+            <div id="accountSettingsResult" class="settings-result"></div>
+          </form>
+          <section class="settings-form account-logout-section">
+            <h3 data-i18n="accountSessionTitle">Session</h3>
+            <div class="settings-actions">
+              <button id="logoutBtn" type="button" class="danger">Logout</button>
+            </div>
+          </section>
+        </div>
+        <div class="settings-pane" data-settings-pane="appearance">
+          <form id="oemSettingsForm" class="settings-form">
+            <h3 data-i18n="settingsTemplateTitle">Template</h3>
+            <label><span data-i18n="templateProductName">Product name</span><input name="brand.productName"></label>
+            <label><span data-i18n="templateSlogan">Slogan</span><input name="brand.subtitle"></label>
+            <label><span data-i18n="templateLogoText">Logo text</span><input name="brand.logoText"></label>
+            <label><span data-i18n="templateLogoUrl">Logo URL</span><input name="brand.logoUrl"></label>
+            <label><span data-i18n="templateCopyright">Copyright</span><input name="brand.copyright"></label>
+            <div class="settings-color-grid">
+              <label><span data-i18n="templatePrimary">Primary</span><input name="theme.primary" type="color"></label>
+              <label><span data-i18n="templateSecondary">Secondary</span><input name="theme.secondary" type="color"></label>
+              <label><span data-i18n="templateBackground">Background</span><input name="theme.background" type="color"></label>
+              <label><span data-i18n="templateNavigation">Navigation</span><input name="theme.navigation" type="color"></label>
+            </div>
+            <div class="settings-actions">
+              <button id="saveOemBtn" type="button" data-i18n="saveTemplate">Save Template</button>
+            </div>
+            <div id="oemSettingsResult" class="settings-result"></div>
+          </form>
+        </div>
+        <div class="settings-pane" data-settings-pane="updates">
+          <section class="settings-form">
+            <h3 id="settingsOtaTitle">Updates</h3>
+            <p id="updateModeText" class="muted"></p>
+            <div class="settings-actions">
+              <button id="checkUpdatesBtn" type="button" data-i18n="checkUpdates">Check Updates</button>
+            </div>
+            <div id="updateSettingsResult" class="settings-result"></div>
+          </section>
+        </div>
+        <div class="settings-pane" data-settings-pane="language">
+          <section class="settings-form">
+            <h3 id="settingsLanguageTitle">Language</h3>
+            <div id="settingsLangSwitch" class="lang-switch" data-i18n-aria="language"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="recognizeModal" class="modal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="recognizeTitle">
+      <div class="modal-head">
+        <h2 id="recognizeTitle">Smart Detect</h2>
+        <button id="recognizeClose" type="button" class="ghost">Close</button>
+      </div>
+      <textarea id="recognizeText"></textarea>
+      <div id="recognizeError" class="modal-error"></div>
+      <div class="modal-actions">
+        <button id="recognizeCancel" type="button" class="ghost">Cancel</button>
+        <button id="recognizeApply" type="button">Detect and fill</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/i18n.js?v=20260602-channel-lock3"></script>
+  <script src="/app.js?v=20260602-channel-lock3"></script>
+</body>
+</html>
